@@ -1,22 +1,38 @@
+# render.yaml — Fixed version for SkillArena
+
 services:
+  # 1️⃣ Backend — FastAPI
   - type: web
     name: skillarena-backend
     env: docker
     rootDir: backend
-    buildCommand: pip install -r requirements.txt
-    startCommand: uvicorn app:app --host 0.0.0.0 --port 8000
+    dockerfilePath: backend/Dockerfile
+    autoDeploy: true
     envVars:
       - key: PORT
         value: 8000
       - key: DATABASE_URL
         value: sqlite:///./skillarena.db
+      - key: SECRET_KEY
+        value: "supersecretkey123"
+      - key: ADMIN_EMAIL
+        value: "admin@skillarena.com"
+      - key: ADMIN_PASSWORD
+        value: "SkillArena@2025"
+      - key: ALLOWED_HOSTS
+        value: "*"
 
+  # 2️⃣ Frontend — React
   - type: web
     name: skillarena-frontend
     env: docker
     rootDir: frontend
-    buildCommand: npm ci && npm run build
-    startCommand: nginx -g 'daemon off;'
+    dockerfilePath: frontend/Dockerfile
+    autoDeploy: true
     envVars:
       - key: REACT_APP_API
-        value: https://skillarena-backend.onrender.com
+        fromService:
+          type: web
+          name: skillarena-backend
+          envVarKey: RENDER_EXTERNAL_URL
+
