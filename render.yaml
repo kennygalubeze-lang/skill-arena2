@@ -1,0 +1,22 @@
+services:
+  - type: web
+    name: skillarena-backend
+    env: docker
+    rootDir: backend
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn app:app --host 0.0.0.0 --port 8000
+    envVars:
+      - key: PORT
+        value: 8000
+      - key: DATABASE_URL
+        value: sqlite:///./skillarena.db
+
+  - type: web
+    name: skillarena-frontend
+    env: docker
+    rootDir: frontend
+    buildCommand: npm ci && npm run build
+    startCommand: nginx -g 'daemon off;'
+    envVars:
+      - key: REACT_APP_API
+        value: https://skillarena-backend.onrender.com

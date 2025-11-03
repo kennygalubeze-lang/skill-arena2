@@ -1,0 +1,1 @@
+SkillArena backend (FastAPI). Run with: uvicorn app:app --reload
